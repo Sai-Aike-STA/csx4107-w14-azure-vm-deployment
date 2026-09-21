@@ -43,6 +43,14 @@ export function proxy(request) {
   });
 }
 
+// Week 14 note about basePath.
+// The backend now runs behind basePath "/webdev/w14" on the course VM, but the
+// matcher below stays on plain paths. Next strips the basePath from the request
+// before it matches proxy paths, so a matcher written with the prefix never
+// fires and the protected APIs become open. Verified by test on Next 16.3.2:
+// the prefixed matcher let /webdev/w14/api/item through with no login, this
+// plain matcher returns 401 as required.
+// matcher: ["/webdev/w14/api/item/:path*", "/webdev/w14/api/user/:path*"], // does not work
 export const config = {
   matcher: ["/api/item/:path*", "/api/user/:path*"],
 };

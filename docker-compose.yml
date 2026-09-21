@@ -1,0 +1,23 @@
+# adapted from the professor's compose file for the existing course VM
+# differences: no nginx-certbot service and no nginx-proxy network because the
+# host nginx already owns ports 80/443 with valid certificates, containers are
+# renamed to avoid collisions, and both publish loopback ports only so the host
+# nginx stays the single public gateway
+services:
+  backend:
+    build: ./backend
+    container_name: w14-backend
+    env_file: ./backend/.env
+    ports:
+      - "127.0.0.1:3002:3000"     # 3000 on the host is taken by PM2
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: https://sai-aike-shwe-tun-aung-backend2.indonesiacentral.cloudapp.azure.com/webdev/w14
+    container_name: w14-frontend
+    ports:
+      - "127.0.0.1:8091:80"
+    restart: unless-stopped
